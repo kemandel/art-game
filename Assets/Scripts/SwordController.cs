@@ -29,7 +29,8 @@ public class SwordController : MonoBehaviour
         myCollisionCollider = GetComponents<BoxCollider2D>()[0];
         mySpriteRenderer = GetComponent<SpriteRenderer>();
         swordHealth = swordStateSprites.Length - 1;
-        if (swordHealth > 0){
+        if (swordHealth > 0)
+        {
             mySpriteRenderer.sprite = swordStateSprites[swordStateSprites.Length - 1 - swordHealth];
         }
     }
@@ -48,20 +49,23 @@ public class SwordController : MonoBehaviour
                 activeCoroutine = StartCoroutine(RotateRightCoroutine());
             }
         }
-        else {
+        else
+        {
             myCollisionCollider.enabled = false;
         }
         if (transform.localPosition.y >= 0)
         {
-            GetComponent<SpriteRenderer>().sortingOrder = 2;
+            GetComponent<SpriteRenderer>().sortingOrder = 3;
         }
         else
         {
-            GetComponent<SpriteRenderer>().sortingOrder = 4;
+            GetComponent<SpriteRenderer>().sortingOrder = 5;
         }
 
-        if (gameOver){
-            foreach(BoxCollider2D b in GetComponentsInChildren<BoxCollider2D>()){
+        if (gameOver)
+        {
+            foreach (BoxCollider2D b in GetComponentsInChildren<BoxCollider2D>())
+            {
                 b.enabled = false;
             }
         }
@@ -69,10 +73,10 @@ public class SwordController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        LoseHealth();
-        SwordCollide(transform.position);
         if (other.gameObject.CompareTag("Wall"))
         {
+            LoseHealth();
+            SwordCollide(transform.position);
             if (activeCoroutine != null)
             {
                 StopCoroutine(activeCoroutine);
@@ -82,66 +86,70 @@ public class SwordController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other) {
-        LoseHealth();
-        // Left of player
-        if (transform.position.x < GetComponentInParent<PlayerController>().transform.position.x)
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Wall"))
         {
-            // Above wall
-            if (transform.position.y > other.contacts[0].point.y)
+            LoseHealth();
+            // Left of player
+            if (transform.position.x < GetComponentInParent<PlayerController>().transform.position.x)
             {
-                activeCoroutine = StartCoroutine(RotateRightCoroutine());
+                // Above wall
+                if (transform.position.y > other.contacts[0].point.y)
+                {
+                    activeCoroutine = StartCoroutine(RotateRightCoroutine());
+                }
+                else if (transform.position.y < other.contacts[0].point.y)
+                {
+                    activeCoroutine = StartCoroutine(RotateLeftCoroutine());
+                }
             }
-            else if (transform.position.y < other.contacts[0].point.y)
+            // Right of player
+            else if (transform.position.x > GetComponentInParent<PlayerController>().transform.position.x)
             {
-                activeCoroutine = StartCoroutine(RotateLeftCoroutine());
+                // Above wall
+                if (transform.position.y > other.contacts[0].point.y)
+                {
+                    activeCoroutine = StartCoroutine(RotateLeftCoroutine());
+                }
+                else if (transform.position.y < other.contacts[0].point.y)
+                {
+                    activeCoroutine = StartCoroutine(RotateRightCoroutine());
+                }
             }
-        }
-        // Right of player
-        else if (transform.position.x > GetComponentInParent<PlayerController>().transform.position.x)
-        {
-            // Above wall
-            if (transform.position.y > other.contacts[0].point.y)
+            // Above player
+            else if (transform.position.y > GetComponentInParent<PlayerController>().transform.position.y)
             {
-                activeCoroutine = StartCoroutine(RotateLeftCoroutine());
+                // Left of wall
+                if (transform.position.x < other.contacts[0].point.x)
+                {
+                    activeCoroutine = StartCoroutine(RotateLeftCoroutine());
+                }
+                else if (transform.position.x > other.contacts[0].point.x)
+                {
+                    activeCoroutine = StartCoroutine(RotateRightCoroutine());
+                }
+                else
+                {
+                    SwordCollide(other.contacts[0].point);
+                }
             }
-            else if (transform.position.y < other.contacts[0].point.y)
+            // Below player
+            else if (transform.position.y < GetComponentInParent<PlayerController>().transform.position.y)
             {
-                activeCoroutine = StartCoroutine(RotateRightCoroutine());
-            }
-        }
-        // Above player
-        else if (transform.position.y > GetComponentInParent<PlayerController>().transform.position.y)
-        {
-            // Left of wall
-            if (transform.position.x < other.contacts[0].point.x)
-            {
-                activeCoroutine = StartCoroutine(RotateLeftCoroutine());
-            }
-            else if (transform.position.x > other.contacts[0].point.x)
-            {
-                activeCoroutine = StartCoroutine(RotateRightCoroutine());
-            }
-            else
-            {
-                SwordCollide(other.contacts[0].point);
-            }
-        }
-        // Below player
-        else if (transform.position.y < GetComponentInParent<PlayerController>().transform.position.y)
-        {
-            // Left of wall
-            if (transform.position.x < other.contacts[0].point.x)
-            {
-                activeCoroutine = StartCoroutine(RotateRightCoroutine());
-            }
-            else if (transform.position.x > other.contacts[0].point.x)
-            {
-                activeCoroutine = StartCoroutine(RotateLeftCoroutine());
-            }
-            else
-            {
-                SwordCollide(other.contacts[0].point);
+                // Left of wall
+                if (transform.position.x < other.contacts[0].point.x)
+                {
+                    activeCoroutine = StartCoroutine(RotateRightCoroutine());
+                }
+                else if (transform.position.x > other.contacts[0].point.x)
+                {
+                    activeCoroutine = StartCoroutine(RotateLeftCoroutine());
+                }
+                else
+                {
+                    SwordCollide(other.contacts[0].point);
+                }
             }
         }
     }
@@ -149,16 +157,19 @@ public class SwordController : MonoBehaviour
     void LoseHealth()
     {
         swordHealth--;
-        if (swordHealth > 0){
+        if (swordHealth > 0)
+        {
             mySpriteRenderer.sprite = swordStateSprites[swordStateSprites.Length - 1 - swordHealth];
         }
-        else {
+        else
+        {
             mySpriteRenderer.sprite = swordStateSprites[swordStateSprites.Length - 1 - swordHealth];
             GameOver();
         }
     }
 
-    void GameOver(){
+    void GameOver()
+    {
         Debug.Log("You Lose!");
         gameOver = true;
     }
