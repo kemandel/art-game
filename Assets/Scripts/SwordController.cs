@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void MyDel(Vector3 position);  // delegate
+public delegate void GameState();
 public class SwordController : MonoBehaviour
 {
     public float swordDistance;
     public float rotateTime;
     public Sprite[] swordStateSprites;
 
-    [HideInInspector]
     public event MyDel SwordCollide;
+    public event GameState GameLose;
+
     public Coroutine activeCoroutine;
 
     Vector3 oldPosition;
@@ -164,14 +166,9 @@ public class SwordController : MonoBehaviour
         else
         {
             mySpriteRenderer.sprite = swordStateSprites[swordStateSprites.Length - 1 - swordHealth];
-            GameOver();
+            GameLose();
+            gameOver = true;
         }
-    }
-
-    void GameOver()
-    {
-        Debug.Log("You Lose!");
-        gameOver = true;
     }
 
     IEnumerator RotateLeftCoroutine()

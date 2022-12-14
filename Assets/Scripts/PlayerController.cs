@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -46,11 +45,6 @@ public class PlayerController : MonoBehaviour
         else if (sword.transform.localPosition.x / sword.swordDistance > .5)
         {
             myAnimator.SetInteger("State", 3);
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
